@@ -1,4 +1,4 @@
-# HWC-Language-Selector
+# HWC's Language Selector
 This small tool allows to change the language locale to the one you pick.
 I made this ELF as a tool to help fixing a regression I found on PCSX2 while testing the new XEB+ dashboard. More information here: https://github.com/PCSX2/pcsx2/issues/4902
 
