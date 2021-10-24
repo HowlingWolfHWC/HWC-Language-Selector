@@ -5,6 +5,7 @@ I made this ELF as a tool to help fix a regression I found on PCSX2 while testin
 Anyway, I hope this also helps some people to use foreign languages consoles where the region does not support them while they wait for XtremeEliteBoot+ which will feature custom language locale settings. Enjoy!
 
 Howling Wolf & Chelsea
+
 Made in Cuba!
 
 PS: This runs on an Enceladus fork of my own!
