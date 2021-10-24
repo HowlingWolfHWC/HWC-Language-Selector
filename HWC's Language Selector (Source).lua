@@ -1,14 +1,35 @@
 Font.fmLoad();
 
 rescuePath={};
-rescuePath[1]="mass:/RESCUE.ELF";
-rescuePath[2]="mc0:/BOOT/BOOT.ELF";
-rescuePath[3]="mc0:/APPS/ULE.ELF";
-rescuePath[4]="mc1:/BOOT/BOOT.ELF";
-rescuePath[5]="mc1:/APPS/ULE.ELF";
+rescuePath[1]="mass:/PS2/APPS/WLE/WLE.ELF";
+rescuePath[2]="mass:/PS2/APPS/WLE_ISR/WLE_ISR.ELF";
+rescuePath[3]="mass:/PS2/APPS/WLE_ISRHDD/WLE_ISRHDD.ELF";
+rescuePath[4]="mass:/PS2/APPS/WLE_KHN/WLE_KHN.ELF";
+rescuePath[5]="mass:/PS2/APPS/WLE_SMB/WLE_SMB.ELF";
+rescuePath[6]="mass:/PS2/APPS/WLE_HWC/WLE_HWC.ELF";
+rescuePath[7]="mass:/PS2/APPS/ULE_442D/ULE_442D.ELF";
+rescuePath[8]="mass:/PS2/APPS/ULE_437/ULE_437.ELF";
+rescuePath[9]="mass:/PS2/APPS/LBFN/LBFN.ELF";
+rescuePath[10]="mc0:/BOOT/BOOT.ELF";
+rescuePath[11]="mc0:/APPS/ULE.ELF";
+rescuePath[12]="mc0:/WLE/WLE.ELF";
+rescuePath[13]="mc0:/ULE/ULE.ELF";
+rescuePath[14]="mc0:/APPS/LBFN.ELF";
+rescuePath[15]="mc0:/LBFN/LBFN.ELF";
+rescuePath[16]="mc1:/BOOT/BOOT.ELF";
+rescuePath[17]="mc1:/APPS/ULE.ELF";
+rescuePath[18]="mc1:/WLE/WLE.ELF";
+rescuePath[19]="mc1:/ULE/ULE.ELF";
+rescuePath[20]="mc1:/LBFN/LBFN.ELF";
+rescuePath[21]="mc1:/APPS/LBFN.ELF";
 
 function LoadULE()
 	for i = 1, 9 do
+		if System.doesFileExist(rescuePath[i]) then
+			System.loadELFUSB(rescuePath[i]);
+		end
+	end
+	for i = 10, 21 do
 		if System.doesFileExist(rescuePath[i]) then
 			System.loadELF(rescuePath[i]);
 		end
@@ -21,19 +42,22 @@ function launchwithLang(languageValue)
 	if imanomode=="Launch Disc" then
 		System.launchCDVD();
 		ErrorString = "Error: Can't launch disc";
+		waittillframe=imanoframe+150;
 	elseif imanomode=="uLaunchELF / DEV1" then
 		LoadULE();
 		ErrorString = "Error: uLaunchELF / DEV1 not found";
+		waittillframe=imanoframe+150;
 	elseif imanomode=="Browser" then
 		System.exitToBrowser();
 		ErrorString = "Error: What the damn fuck?! This was unexpected!";
+		waittillframe=imanoframe+150;
 	end
 	Font.fmLoad();
 end
 
-ErrorString = ""
+ErrorString = "";
 
-imanomode="Launch Disc"
+imanomode="Launch Disc";
 
 pad = Pads.get();
 oldpad=pad;
@@ -44,6 +68,8 @@ ROMVER = System.readFile(temporaryVar, temporaryVar_size)
 ROMVERRegion = string.sub(ROMVER,5,5)
 System.closeFile(temporaryVar)
 
+imanoframe = 1;
+waittillframe = 1;
 
 if ROMVERRegion~="E" then
 	Screen.setMode(NTSC, 640, 448)
@@ -95,6 +121,9 @@ while true do
 			imanoVideoMode="PAL"
 		end
 	end
-	
+	imanoframe = imanoframe+1;
+	if waittillframe == imanoframe then
+		ErrorString = "";
+	end
 	oldpad=pad;
 end
