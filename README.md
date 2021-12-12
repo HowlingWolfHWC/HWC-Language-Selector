@@ -9,6 +9,6 @@ Howling Wolf & Chelsea
 Made in Cuba!
 
 PS: This runs on an Enceladus fork of my own!
-Special thanks to: A youkai of love, Daniel Santos, ffgriever, greekVASILIS5, Maximus32, uyjulian and Venão
+Special thanks to: A youkai of love, Berion, Daniel Santos, ffgriever, greekVASILIS5, LourdesAnn, Maximus32, uyjulian and Venão
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/L3L26U8N1)
