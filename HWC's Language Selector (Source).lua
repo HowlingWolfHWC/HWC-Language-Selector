@@ -10,18 +10,18 @@ rescuePath[6]="mass:/PS2/APPS/WLE_HWC/WLE_HWC.ELF";
 rescuePath[7]="mass:/PS2/APPS/ULE_442D/ULE_442D.ELF";
 rescuePath[8]="mass:/PS2/APPS/ULE_437/ULE_437.ELF";
 rescuePath[9]="mass:/PS2/APPS/LBFN/LBFN.ELF";
-rescuePath[10]="mc0:/BOOT/BOOT.ELF";
-rescuePath[11]="mc0:/APPS/ULE.ELF";
-rescuePath[12]="mc0:/WLE/WLE.ELF";
-rescuePath[13]="mc0:/ULE/ULE.ELF";
-rescuePath[14]="mc0:/APPS/LBFN.ELF";
-rescuePath[15]="mc0:/LBFN/LBFN.ELF";
-rescuePath[16]="mc1:/BOOT/BOOT.ELF";
-rescuePath[17]="mc1:/APPS/ULE.ELF";
-rescuePath[18]="mc1:/WLE/WLE.ELF";
-rescuePath[19]="mc1:/ULE/ULE.ELF";
-rescuePath[20]="mc1:/LBFN/LBFN.ELF";
-rescuePath[21]="mc1:/APPS/LBFN.ELF";
+rescuePath[10]="mc0:/APPS/ULE.ELF";
+rescuePath[11]="mc0:/WLE/WLE.ELF";
+rescuePath[12]="mc0:/ULE/ULE.ELF";
+rescuePath[13]="mc0:/APPS/LBFN.ELF";
+rescuePath[14]="mc0:/LBFN/LBFN.ELF";
+rescuePath[15]="mc0:/BOOT/BOOT.ELF";
+rescuePath[16]="mc1:/APPS/ULE.ELF";
+rescuePath[17]="mc1:/WLE/WLE.ELF";
+rescuePath[18]="mc1:/ULE/ULE.ELF";
+rescuePath[19]="mc1:/LBFN/LBFN.ELF";
+rescuePath[20]="mc1:/APPS/LBFN.ELF";
+rescuePath[21]="mc1:/BOOT/BOOT.ELF";
 
 ESRPath={};
 ESRPath[1]="mass:/PS2/APPS/ESR/ESR.ELF";
@@ -88,6 +88,13 @@ ESRTryToGuess[49]="esr_r10f_direct_off.elf";
 ESRTryToGuess[50]="esr_r10f_direct.elf";
 ESRTryToGuess[51]="esr_r10f_mcard.elf";
 
+--[[
+for i = 1, 20 do
+	hwc_creditsZ = Graphics.loadHWCImage(16)
+	Graphics.freeImage(hwc_creditsZ);
+end
+--]]
+
 HWCgfx_background = Graphics.loadHWCImage(1)
 HWCgfx_countryflags = Graphics.loadHWCImage(2)
 HWCgfx_disc={};
@@ -106,6 +113,7 @@ HWCgfx_memorycard = Graphics.loadHWCImage(14)
 HWCgfx_overlay = Graphics.loadHWCImage(15)
 hwc_credits = Graphics.loadHWCImage(16)
 
+
 function LoadULE()
 	for i = 1, 21 do
 		if System.doesFileExist(rescuePath[i]) then
@@ -123,8 +131,19 @@ function LoadESR()
 	for i = 1, 51 do
 		PathA="mc0:/BOOT/"..ESRTryToGuess[i];
 		PathB="mc1:/BOOT/"..ESRTryToGuess[i];
+		PathC="mc0:/APPS/"..ESRTryToGuess[i];
+		PathD="mc1:/APPS/"..ESRTryToGuess[i];
 		if System.doesFileExist(PathA) then
+			System.loadELFNoIOPReset(PathA);
+		end
+		if System.doesFileExist(PathB) then
 			System.loadELFNoIOPReset(PathB);
+		end
+		if System.doesFileExist(PathC) then
+			System.loadELFNoIOPReset(PathC);
+		end
+		if System.doesFileExist(PathD) then
+			System.loadELFNoIOPReset(PathD);
 		end
 	end
 end
@@ -296,13 +315,23 @@ end
 imanoframe = 1;
 waittillframe = 1;
 
+Screen.setMode(NTSC, 704, 480)
+minusOffset=16
+imanoVideoMode="NTSC"
+for i = 1, 10 do
+	Screen.clear();
+	Graphics.drawRect(0, 0, 1280, 960, Color.new(0, 0, 0, 255))
+	Screen.waitVblankStart()
+	Screen.flip()
+end
+
 if ROMVERRegion~="E" then
 	Screen.setMode(NTSC, 704, 480)
 	minusOffset=16
 	imanoVideoMode="NTSC"
 else
-	Screen.setMode(PAL, 704, 512)
-	minusOffset=0
+	Screen.setMode(PAL, 704, 480)
+	minusOffset=16
 	imanoVideoMode="PAL"
 end
 
@@ -328,7 +357,7 @@ function languagePlus()
 			oldHWCDisc = HWCDisc;
 			Screen.clear();
 			Graphics.drawRect(0, 0, 1280, 960, Color.new(0, 0, 0, 255))
-			Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0.001, 255)
+			Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0, 255)
 			Graphics.drawImage(HWCgfx_countryflags, 8, 423-minusOffset, 37)
 			if imanomode=="Launch Disc" then
 				if discLaunchMode == "NoDisc" then
@@ -381,7 +410,7 @@ function languageMinus()
 			oldHWCDisc = HWCDisc;
 			Screen.clear();
 			Graphics.drawRect(0, 0, 1280, 960, Color.new(0, 0, 0, 255))
-			Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0.001, 255)
+			Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0, 255)
 			Graphics.drawImage(HWCgfx_countryflags, 8, 423-minusOffset, 37)
 			if imanomode=="Launch Disc" then
 				if discLaunchMode == "NoDisc" then
@@ -422,7 +451,7 @@ for zz = 1, 10 do
 	pad = Pads.get();
 	Screen.clear();
 	Graphics.drawRect(0, 0, 1280, 960, Color.new(0, 0, 0, 255))
-	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0.001, zz*25)
+	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0, zz*25)
 	Screen.waitVblankStart()
 	Screen.flip()
 	if Pads.check(pad, PAD_START) and not Pads.check(oldpad, PAD_START) then
@@ -434,8 +463,8 @@ for zz = 1, 10 do
 			clearscr()
 		else
 			clearscr()
-			Screen.setMode(PAL, 704, 512)
-			minusOffset=0
+			Screen.setMode(PAL, 704, 480)
+			minusOffset=16
 			imanoVideoMode="PAL"
 			clearscr()
 		end
@@ -447,8 +476,8 @@ for zz = 1, 25 do
 	pad = Pads.get();
 	Screen.clear();
 	Graphics.drawRect(0, 0, 1280, 960, Color.new(0, 0, 0, 255))
-	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0.001, 255)
-	Graphics.drawImage(hwc_credits, 0, 0-minusOffset, zz*10)
+	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0, 255)
+	Graphics.drawImage(hwc_credits, 73, 66-minusOffset, zz*10)
 	Screen.waitVblankStart()
 	Screen.flip()
 	if Pads.check(pad, PAD_START) and not Pads.check(oldpad, PAD_START) then
@@ -460,8 +489,8 @@ for zz = 1, 25 do
 			clearscr()
 		else
 			clearscr()
-			Screen.setMode(PAL, 704, 512)
-			minusOffset=0
+			Screen.setMode(PAL, 704, 480)
+			minusOffset=16
 			imanoVideoMode="PAL"
 			clearscr()
 		end
@@ -474,8 +503,8 @@ while zz < 75 do
 	pad = Pads.get();
 	Screen.clear();
 	Graphics.drawRect(0, 0, 1280, 960, Color.new(0, 0, 0, 255))
-	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0.001, 255)
-	Graphics.drawImage(hwc_credits, 0, 0-minusOffset, 255)
+	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0, 255)
+	Graphics.drawImage(hwc_credits, 73, 66-minusOffset, 255)
 	Screen.waitVblankStart()
 	Screen.flip()
 	if Pads.check(pad, PAD_CROSS) and not Pads.check(oldpad, PAD_CROSS) then
@@ -491,8 +520,8 @@ while zz < 75 do
 			clearscr()
 		else
 			clearscr()
-			Screen.setMode(PAL, 704, 512)
-			minusOffset=0
+			Screen.setMode(PAL, 704, 480)
+			minusOffset=16
 			imanoVideoMode="PAL"
 			clearscr()
 		end
@@ -507,8 +536,8 @@ for zz = 1, 25 do
 	fadeOut=zz*10
 	fadeOut=255-fadeOut
 	Graphics.drawRect(0, 0, 1280, 960, Color.new(0, 0, 0, 255))
-	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0.001, 255)
-	Graphics.drawImage(hwc_credits, 0, 0-minusOffset, fadeOut)
+	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0, 255)
+	Graphics.drawImage(hwc_credits, 73, 66-minusOffset, fadeOut)
 	Screen.waitVblankStart()
 	Screen.flip()
 	if Pads.check(pad, PAD_START) and not Pads.check(oldpad, PAD_START) then
@@ -520,8 +549,8 @@ for zz = 1, 25 do
 			clearscr()
 		else
 			clearscr()
-			Screen.setMode(PAL, 704, 512)
-			minusOffset=0
+			Screen.setMode(PAL, 704, 480)
+			minusOffset=16
 			imanoVideoMode="PAL"
 			clearscr()
 		end
@@ -544,7 +573,7 @@ for zz = 1, 25 do
 	oldHWCDisc = HWCDisc;
 	Screen.clear();
 	Graphics.drawRect(0, 0, 1280, 960, Color.new(0, 0, 0, 255))
-	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0.001, 255)
+	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0, 255)
 	Graphics.drawImage(HWCgfx_countryflags, 8, 423-minusOffset, 37)
 	if imanomode=="Launch Disc" then
 		if discLaunchMode == "NoDisc" then
@@ -570,7 +599,7 @@ for zz = 1, 25 do
 	end
 	Graphics.drawImage(HWCgfx_key_left, 33, 182-minusOffset)
 	Graphics.drawImage(HWCgfx_key_right, 612, 182-minusOffset)
-	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0.001, fadeOut)
+	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0, fadeOut)
 	Screen.waitVblankStart()
 	spinDisc()
 	Screen.flip()
@@ -583,8 +612,8 @@ for zz = 1, 25 do
 			clearscr()
 		else
 			clearscr()
-			Screen.setMode(PAL, 704, 512)
-			minusOffset=0
+			Screen.setMode(PAL, 704, 480)
+			minusOffset=16
 			imanoVideoMode="PAL"
 			clearscr()
 		end
@@ -607,7 +636,7 @@ while true do
 	pad = Pads.get();
 	Screen.clear();
 	Graphics.drawRect(0, 0, 1280, 960, Color.new(0, 0, 0, 255))
-	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0.001, 255)
+	Graphics.drawImageExtended(HWCgfx_background, 352, 256-minusOffset, 0, 0, 128, 128, 704, 512, 0, 255)
 	Graphics.drawImage(HWCgfx_countryflags, 8, 423-minusOffset, 37)
 	if imanomode=="Launch Disc" then
 		if discLaunchMode == "NoDisc" then
@@ -671,8 +700,8 @@ while true do
 			clearscr()
 		else
 			clearscr()
-			Screen.setMode(PAL, 704, 512)
-			minusOffset=0
+			Screen.setMode(PAL, 704, 480)
+			minusOffset=16
 			imanoVideoMode="PAL"
 			clearscr()
 		end
